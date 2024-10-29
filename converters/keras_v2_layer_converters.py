@@ -17,14 +17,14 @@ import h5py
 
 def set_globals(backend):
     global BACKEND_SUFFIX
-    BACKEND_SUFFIX = ":0" if backend == "tensorflow" else ""
+    BACKEND_SUFFIX = "" if backend == "tensorflow" else ""
 
 def _get_dense_layer_parameters(h5, layer_config, n_in, layer_type):
     """Get weights, bias, and n-outputs for a dense layer"""
-    layer_group = h5[layer_config['name']]
+    layer_group = h5["layers/"+layer_config['name']]
     layers = _get_h5_layers(layer_group)
-    weights = layers["kernel"+BACKEND_SUFFIX]
-    bias = layers["bias"+BACKEND_SUFFIX]
+    weights = layers["0"+BACKEND_SUFFIX]
+    bias = layers["1"+BACKEND_SUFFIX]
     assert weights.shape[1] == bias.shape[0]
     assert weights.shape[0] == n_in
     # TODO: confirm that we should be transposing the weight

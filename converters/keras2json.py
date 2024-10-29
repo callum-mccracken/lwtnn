@@ -30,19 +30,18 @@ value) pairs of strings to pass to the application.
 
 import argparse
 import json
-import h5py
-from collections import Counter
 import sys
 import importlib
+import h5py
 from keras_layer_converters_common import skip_layers
 
 
 def _run():
     """Top level routine"""
     args = _get_args()
-    with open(args.arch_file, 'r') as arch_file:
+    with open(args.arch_file, 'r', encoding="utf-8") as arch_file:
         arch = json.load(arch_file)
-    with open(args.variables_file, 'r') as inputs_file:
+    with open(args.variables_file, 'r', encoding="utf-8") as inputs_file:
         inputs = json.load(inputs_file)
 
     _check_version(arch)
@@ -51,10 +50,10 @@ def _run():
 
     with h5py.File(args.hdf5_file, 'r') as h5:
         for group in h5:
-          if group == "model_weights":
-            sys.exit("The weight file has been saved incorrectly.\n"
-                "Please see https://github.com/lwtnn/lwtnn/wiki/Keras-Converter#saving-keras-models \n"
-                "on how to correctly save weights.")
+            if group == "model_weights":
+                sys.exit("The weight file has been saved incorrectly. Please see\n"
+                         "https://github.com/lwtnn/lwtnn/wiki/Keras-Converter#saving-keras-models\n"
+                         "on how to correctly save weights.")
         out_dict = {
             'layers': _get_layers(arch, inputs, h5),
         }
@@ -126,14 +125,15 @@ def _get_layers(network, inputs, h5):
 
     _send_recieve_meta_info(BACKEND)
 
-    for layer_n in range(len(in_layers)):
+    for layer_arch in in_layers:
         # get converter for this layer
-        layer_arch = in_layers[layer_n]
         layer_type = layer_arch['class_name'].lower()
-        if layer_type in skip_layers: continue
+        if layer_type in skip_layers:
+            continue
 
         skip_layers_sequential = {'inputlayer'}
-        if layer_type in skip_layers_sequential: continue
+        if layer_type in skip_layers_sequential:
+            continue
 
         convert = layer_converters[layer_type]
 
