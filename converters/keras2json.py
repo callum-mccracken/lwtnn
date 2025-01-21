@@ -33,7 +33,7 @@ import json
 import sys
 import importlib
 import h5py
-from keras_layer_converters_common import skip_layers
+from .keras_layer_converters_common import skip_layers
 
 
 def _run():
